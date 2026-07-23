@@ -1,6 +1,7 @@
 import "dotenv/config";
-import { connectPool } from "./db/pool.js";
+import { connectPool, closePool } from "./db/pool.js";
 import { createAndStartServer } from "./mcp/server.js";
+import { checkVersionChange } from "./utils/version-check.js";
 import { parseArgs } from "node:util";
 
 interface CliArgs {
@@ -49,6 +50,8 @@ Options:
 }
 
 async function main(): Promise<void> {
+  checkVersionChange();
+
   const cli = parseCliArgs();
 
   try {
@@ -59,16 +62,28 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
+  process.on("SIGINT", async () => {
+    await closePool();
+    process.exit(0);
+  });
+
+  process.on("SIGTERM", async () => {
+    await closePool();
+    process.exit(0);
+  });
+
   try {
     await createAndStartServer();
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error(`Server error: ${message}`);
+    await closePool();
     process.exit(1);
   }
 }
 
-main().catch((err) => {
+main().catch(async (err) => {
   console.error("Unhandled error:", err);
+  await closePool();
   process.exit(1);
 });
