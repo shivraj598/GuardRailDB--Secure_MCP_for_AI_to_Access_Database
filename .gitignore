@@ -3,6 +3,9 @@ dist/
 .env
 *.tsbuildinfo
 
+# Playwright artifacts
+.playwright-mcp/
+
 # Project docs (not part of the published package)
 design.md
 projectprompt.md
