@@ -1,0 +1,47 @@
+{
+  "name": "db-guardrail-mcp",
+  "version": "1.0.0",
+  "description": "A secure, schema-aware MCP gateway for relational databases — lets LLMs query Postgres without raw SQL, context bloat, or data loss.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "db-guardrail-mcp": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "database",
+    "postgres",
+    "ai",
+    "llm",
+    "security",
+    "gateway"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.6.1",
+    "dotenv": "^16.4.7",
+    "pg": "^8.13.1",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.1",
+    "@types/pg": "^8.11.11",
+    "tsup": "^8.3.6",
+    "typescript": "^5.7.3"
+  }
+}

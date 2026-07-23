@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.env
+*.tsbuildinfo
+
+# Project docs (not part of the published package)
+design.md
+projectprompt.md
+projectstructure.md
+Design.md
+projectPrompt.md
+projectStructure.md
+phased_development_plan.md
