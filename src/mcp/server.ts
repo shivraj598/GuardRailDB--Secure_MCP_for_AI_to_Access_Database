@@ -3,7 +3,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { registerSchemaTool } from "../tools/schema.js";
 import { registerQueryTool } from "../tools/query.js";
 import { registerSimulateTool } from "../tools/simulate.js";
-import { readPackageVersion } from "../utils/version.js";
+import { readPackageVersion } from "../utils/version-check.js";
 
 export async function createAndStartServer(): Promise<void> {
   const version = readPackageVersion();
