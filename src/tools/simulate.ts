@@ -2,16 +2,14 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { getPool } from "../db/pool.js";
 
-const SimulateArgs = {
-  query: z.string().min(1).describe("SQL query to simulate (will be rolled back)"),
-  params: z.array(z.unknown()).optional().describe("Query parameter values"),
-};
-
 export function registerSimulateTool(server: McpServer): void {
   server.tool(
     "simulate_query",
-    "Run a SQL query inside a sandboxed transaction that is immediately rolled back — zero risk to persistent data.",
-    SimulateArgs,
+    "Run any SQL inside a sandboxed transaction that is immediately rolled back. Use this to preview INSERT, UPDATE, DELETE, or DDL effects without persisting changes.",
+    {
+      query: z.string().min(1).describe("SQL to simulate (will be rolled back)"),
+      params: z.array(z.unknown()).optional().describe("Query parameter values"),
+    },
     async ({ query, params }) => {
       const pool = getPool();
       const client = await pool.connect();
@@ -30,7 +28,7 @@ export function registerSimulateTool(server: McpServer): void {
             {
               type: "text",
               text: [
-                "**SIMULATION** — query was rolled back. No changes were persisted.",
+                "**SIMULATION** — query was rolled back. No changes persisted.",
                 "",
                 `Rows returned: ${result.rows.length}`,
                 `Rows affected: ${result.rowCount ?? "unknown"}`,

@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { connectPool, closePool } from "./db/pool.js";
 import { createAndStartServer } from "./mcp/server.js";
-import { checkVersionChange } from "./utils/version-check.js";
+import { checkVersionChange, readPackageVersion } from "./utils/version-check.js";
 import { parseArgs } from "node:util";
 
 interface CliArgs {
@@ -35,7 +35,7 @@ function parseCliArgs(): CliArgs {
 
   return {
     connectionString,
-    apiKey: parsed.values.apiKey,
+    apiKey: parsed.values.apiKey || process.env.GROQ_API_KEY,
   };
 }
 
@@ -49,10 +49,41 @@ Options:
 `);
 }
 
+async function validateApiKey(apiKey: string): Promise<void> {
+  const funcUrl = process.env.SUPABASE_FUNCTION_URL ||
+    "https://hvssbdhbyehhmbehrfjc.supabase.co/functions/v1/validate-key";
+
+  try {
+    const res = await fetch(funcUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ apiKey }),
+    });
+
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      console.error(`API key validation failed: ${body.error || res.statusText}`);
+      return;
+    }
+
+    const body = await res.json();
+    if (body.valid) {
+      console.error(`Authenticated as user: ${body.user_id}`);
+    }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error(`API key validation error: ${message}`);
+  }
+}
+
 async function main(): Promise<void> {
   checkVersionChange();
 
   const cli = parseCliArgs();
+
+  if (cli.apiKey) {
+    await validateApiKey(cli.apiKey);
+  }
 
   try {
     await connectPool(cli.connectionString);

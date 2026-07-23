@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up — GuardRailDB</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="grid-bg"></div>
+<nav>
+  <a href="/" class="logo">GuardRail<span>DB</span></a>
+  <div class="links">
+    <a href="install.html">Install</a>
+    <a href="usage.html">Usage</a>
+    <a href="changelog.html">Changelog</a>
+    <a href="signup.html" class="active">Sign Up</a>
+    <a href="about.html">About</a>
+  </div>
+</nav>
+
+<header>
+  <h1>Get Your API Key</h1>
+  <p>Sign up to receive an API key for GuardRailDB.</p>
+</header>
+
+<div class="content">
+  <div class="section">
+    <form onsubmit="return false;">
+      <div class="form-group">
+        <label for="email">Email address</label>
+        <input type="email" id="email" placeholder="you@example.com" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="At least 8 characters" minlength="8" required>
+      </div>
+      <button type="submit" class="btn btn-primary" onclick="handleSignUp()">Create Account & Get Key</button>
+    </form>
+    <p style="text-align:center;margin-top:12px;font-size:13px;color:#555;">
+      Already have an account? <a href="signup.html" style="color:#f97316;">Log in</a>
+    </p>
+  </div>
+
+  <div class="section" id="key-display" style="display:none;">
+    <h2>Your API Key</h2>
+    <p>Use this key with the <code>--apiKey</code> flag when running GuardRailDB. Store it securely — you won't be able to see it again after leaving this page.</p>
+    <div class="code-block" id="api-key-value" style="display:flex;align-items:center;justify-content:space-between;">
+      <span id="key-text">gb_xxxx_xxxx_xxxx_xxxx</span>
+      <button onclick="copyKey()" style="background:#2a2a2a;border:none;color:#fff;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:12px;">Copy</button>
+    </div>
+  </div>
+</div>
+
+<script>
+async function handleSignUp() {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  if (!email || password.length < 8) return alert('Please fill in all fields. Password must be at least 8 characters.');
+  document.querySelector('form').style.display = 'none';
+  document.getElementById('key-display').style.display = 'block';
+  document.getElementById('key-text').textContent = 'gb_' + Array.from({length:4},()=>Math.random().toString(36).slice(2,6)).join('_');
+}
+function copyKey() {
+  navigator.clipboard.writeText(document.getElementById('key-text').textContent);
+}
+</script>
+</div>
+
+<footer>
+  Developed by <a href="https://github.com/shivraj598" target="_blank">Shivraj Timilsena</a> &middot; <a href="https://github.com/shivraj598/GuardRailDB--Secure_MCP_for_AI_to_Access_Database" target="_blank">GitHub</a>
+</footer>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Install — GuardRailDB</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="grid-bg"></div>
+<nav>
+  <a href="/" class="logo">GuardRail<span>DB</span></a>
+  <div class="links">
+    <a href="install.html" class="active">Install</a>
+    <a href="usage.html">Usage</a>
+    <a href="changelog.html">Changelog</a>
+    <a href="signup.html">Sign Up</a>
+    <a href="about.html">About</a>
+  </div>
+</nav>
+
+<header>
+  <h1>Install Guide</h1>
+  <p>Get GuardRailDB running in under two minutes.</p>
+</header>
+
+<div class="content">
+  <div class="section">
+    <h2>Prerequisites</h2>
+    <ul>
+      <li><strong>Node.js</strong> v18 or later</li>
+      <li>A running <strong>PostgreSQL</strong> instance (local or cloud, e.g. Supabase)</li>
+      <li>Your database <strong>connection string</strong> (<code>postgresql://user:pass@host:5432/dbname</code>)</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Quick Start</h2>
+    <p>Run with a single <code>npx</code> command — no installation required:</p>
+    <div class="code-block">
+      npx db-guardrail-mcp --connectionString=postgresql://user:pass@localhost:5432/mydb
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Step by Step</h2>
+    <h3>1. Get an API Key</h3>
+    <p>Sign up at <a href="signup.html" style="color:#f97316;">guardraildb.dev/signup</a> to receive your API key. In Phase 1 the key is accepted but not yet enforced — providing it now means your config won't change when validation goes live.</p>
+
+    <h3>2. Run the Server</h3>
+    <div class="code-block">
+      npx db-guardrail-mcp \<br>
+      &nbsp;&nbsp;--connectionString=postgresql://user:pass@localhost:5432/mydb \<br>
+      &nbsp;&nbsp;--apiKey=your_key_here
+    </div>
+
+    <h3>3. Confirm It's Running</h3>
+    <p>You should see a version banner and the server will wait for an MCP client to connect. No news is good news — if there are no connection errors, you're ready.</p>
+  </div>
+
+  <div class="section">
+    <h2>Troubleshooting</h2>
+    <table>
+      <tr><th>Problem</th><th>Solution</th></tr>
+      <tr><td>Cannot connect to database</td><td>Verify your connection string — check host, port, credentials, and that your IP is allowed (for cloud databases like Supabase, enable IPv4 in project settings).</td></tr>
+      <tr><td>Invalid API key</td><td>Generate a new key from your <a href="signup.html" style="color:#f97316;">account page</a>. In Phase 1 you can omit <code>--apiKey</code>.</td></tr>
+      <tr><td>Node.js version error</td><td>Ensure you're on Node.js v18+. Run <code>node --version</code> to check.</td></tr>
+    </table>
+  </div>
+</div>
+
+<footer>
+  Developed by <a href="https://github.com/shivraj598" target="_blank">Shivraj Timilsena</a> &middot; <a href="https://github.com/shivraj598/GuardRailDB--Secure_MCP_for_AI_to_Access_Database" target="_blank">GitHub</a>
+</footer>
+</body>
+</html>

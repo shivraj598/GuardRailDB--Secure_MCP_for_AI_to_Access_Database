@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Usage Guide — GuardRailDB</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="grid-bg"></div>
+<nav>
+  <a href="/" class="logo">GuardRail<span>DB</span></a>
+  <div class="links">
+    <a href="install.html">Install</a>
+    <a href="usage.html" class="active">Usage</a>
+    <a href="changelog.html">Changelog</a>
+    <a href="signup.html">Sign Up</a>
+    <a href="about.html">About</a>
+  </div>
+</nav>
+
+<header>
+  <h1>Usage Guide</h1>
+  <p>How to connect MCP clients and use the exposed tools.</p>
+</header>
+
+<div class="content">
+  <div class="section">
+    <h2>Exposed Tools</h2>
+    <p>The server exposes three tools via MCP. Any MCP-compatible client can discover and call them automatically.</p>
+
+    <div class="tool-grid">
+      <div class="tool-card">
+        <div class="tool-name">get_schema</div>
+        <div class="tool-desc">Returns a compact Markdown summary of the database schema — tables, columns, types, nullability, and primary keys.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">execute_query</div>
+        <div class="tool-desc">Runs a validated SELECT query inside a READ ONLY transaction with hard 50-row pagination.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">simulate_query</div>
+        <div class="tool-desc">Runs any SQL inside a transaction and rolls it back immediately — zero risk to persistent data.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Connecting MCP Clients</h2>
+
+    <h3>Claude Desktop</h3>
+    <p>Add to your Claude Desktop config (<code>claude_desktop_config.json</code>):</p>
+    <div class="code-block">
+      {<br>
+      &nbsp;&nbsp;"mcpServers": {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;"db-guardrail": {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"command": "npx",<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"args": [<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"db-guardrail-mcp",<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"--connectionString", "postgresql://...",<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"--apiKey", "your_key_here"<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+      &nbsp;&nbsp;}<br>
+      }
+    </div>
+
+    <h3>Custom CLI / Script</h3>
+    <div class="code-block">
+      import { spawn } from 'node:child_process';<br>
+      <br>
+      const server = spawn('npx', [<br>
+      &nbsp;&nbsp;'db-guardrail-mcp',<br>
+      &nbsp;&nbsp;'--connectionString', 'postgresql://...',<br>
+      &nbsp;&nbsp;'--apiKey', 'your_key_here',<br>
+      ]);<br>
+      <br>
+      // Communicate over stdin/stdout using JSON-RPC 2.0
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Important Behavior</h2>
+
+    <h3>Pagination is Hard-Capped at 50 Rows</h3>
+    <p>Regardless of what the model or client requests, <code>execute_query</code> will never return more than 50 rows. This protects against runaway queries and context-window overflow. If your query would return more than 50 rows, the response includes a notice indicating truncation.</p>
+
+    <h3>Data Never Leaves Your Machine</h3>
+    <p>Your connection string, database schema, queries, and query results stay entirely on your machine. They are never sent to any hosted server. The only outbound call is a lightweight ping to validate your API key and log that the tool is active — no data, no queries, no results.</p>
+
+    <h3>Mutations Require Simulation</h3>
+    <p><code>execute_query</code> runs inside a <code>BEGIN READ ONLY</code> transaction — any <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>, or DDL statement will be rejected at the database level. To preview the effects of a mutation, use <code>simulate_query</code>, which runs inside a normal transaction and issues a <code>ROLLBACK</code> after execution.</p>
+  </div>
+</div>
+
+<footer>
+  Developed by <a href="https://github.com/shivraj598" target="_blank">Shivraj Timilsena</a> &middot; <a href="https://github.com/shivraj598/GuardRailDB--Secure_MCP_for_AI_to_Access_Database" target="_blank">GitHub</a>
+</footer>
+</body>
+</html>
